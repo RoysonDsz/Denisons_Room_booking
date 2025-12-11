@@ -1,4 +1,4 @@
-const API_BASE = 'https://caf8a0ed570c.ngrok-free.app';
+const API_BASE = 'https://dadbe2c6ed06.ngrok-free.app';
 
 // State
 let token = '';
@@ -116,6 +116,12 @@ function setupEventListeners() {
         renderCalendar();
     });
 
+    // Handle children age inputs
+    const bookingChildrenInput = document.getElementById('bookingChildren');
+    if (bookingChildrenInput) {
+        bookingChildrenInput.addEventListener('input', handleChildrenCountChange);
+    }
+
     // Refresh Buttons
     const refreshRoomsBtn = document.getElementById('refreshRoomsBtn');
     if (refreshRoomsBtn) {
@@ -153,6 +159,17 @@ function setupEventListeners() {
             }
         });
     }
+
+    // Stat Card Navigation
+    const statCards = document.querySelectorAll('.stat-card[data-navigate]');
+    statCards.forEach(card => {
+        card.addEventListener('click', () => {
+            const targetTab = card.getAttribute('data-navigate');
+            if (targetTab) {
+                switchTab(targetTab);
+            }
+        });
+    });
 
     // Theme Toggle
     const themeToggle = document.getElementById('themeToggle');
@@ -495,6 +512,22 @@ function showBookingDetails(bookingId) {
     statusEl.textContent = booking.status;
     statusEl.className = `status-badge ${booking.status}`;
 
+    // Additional details
+    const guestsText = `${booking.adults} Adult${booking.adults > 1 ? 's' : ''}` +
+        (booking.children > 0 ? `, ${booking.children} Child${booking.children > 1 ? 'ren' : ''}` : '');
+    document.getElementById('detailGuests').textContent = guestsText;
+
+    document.getElementById('detailPrice').textContent = `₹${booking.total_price.toLocaleString()}`;
+
+    // Format created_at date
+    const createdDate = new Date(booking.created_at);
+    const formattedDate = createdDate.toLocaleDateString('en-IN', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+    });
+    document.getElementById('detailCreatedAt').textContent = formattedDate;
+
     document.getElementById('bookingDetailsModal').classList.add('active');
 }
 
@@ -560,9 +593,10 @@ async function handleCreateRoomType(e) {
     e.preventDefault();
 
     const roomNumberRows = document.querySelectorAll('.room-number-row');
-    const roomNumbersData = Array.from(roomNumberRows).map(row =>
-        parseInt(row.querySelector('input').value)
-    );
+    const roomNumbersData = Array.from(roomNumberRows).map(row => ({
+        room_no: parseInt(row.querySelector('input').value),
+        status: 'available'
+    }));
 
     const amenitiesInput = document.getElementById('amenities').value;
     const amenitiesArray = amenitiesInput
@@ -614,11 +648,23 @@ async function handleCreateRoomType(e) {
             resetRoomForm();
         } else {
             const error = await response.json();
-            alert(`Error: ${error.detail || 'Operation failed'}`);
+            let errorMessage = 'Operation failed';
+
+            if (error.detail) {
+                if (typeof error.detail === 'string') {
+                    errorMessage = error.detail;
+                } else if (Array.isArray(error.detail)) {
+                    errorMessage = error.detail.map(e => e.msg || JSON.stringify(e)).join(', ');
+                } else {
+                    errorMessage = JSON.stringify(error.detail);
+                }
+            }
+
+            alert(`Error: ${errorMessage}`);
         }
     } catch (error) {
         console.error('Error saving room type:', error);
-        alert('Error saving room type');
+        alert('Error saving room type: ' + error.message);
     }
 }
 
@@ -738,9 +784,45 @@ function populateBookingRoomTypes() {
     });
 }
 
+// Handle Children Count Change
+function handleChildrenCountChange() {
+    const childrenCount = parseInt(document.getElementById('bookingChildren').value) || 0;
+    const container = document.getElementById('childAgesContainer');
+    const inputsDiv = document.getElementById('childAgesInputs');
+
+    // Show/hide container
+    if (childrenCount > 0) {
+        container.style.display = 'block';
+    } else {
+        container.style.display = 'none';
+        inputsDiv.innerHTML = '';
+        return;
+    }
+
+    // Clear existing inputs
+    inputsDiv.innerHTML = '';
+
+    // Create input fields for each child
+    for (let i = 0; i < childrenCount; i++) {
+        const ageInput = document.createElement('input');
+        ageInput.type = 'number';
+        ageInput.min = '0';
+        ageInput.max = '17';
+        ageInput.placeholder = `Age of Child ${i + 1}`;
+        ageInput.className = 'child-age-input';
+        ageInput.required = true;
+        ageInput.style.width = '100%';
+        inputsDiv.appendChild(ageInput);
+    }
+}
+
 // Handle Create Booking
 async function handleCreateBooking(e) {
     e.preventDefault();
+
+    // Collect child ages
+    const childAgesInputs = document.querySelectorAll('.child-age-input');
+    const childrenAges = Array.from(childAgesInputs).map(input => parseInt(input.value));
 
     const bookingData = {
         user_name: document.getElementById('bookingGuestName').value,
@@ -750,6 +832,7 @@ async function handleCreateBooking(e) {
         check_out_date: document.getElementById('bookingCheckOut').value,
         adults: parseInt(document.getElementById('bookingAdults').value),
         children: parseInt(document.getElementById('bookingChildren').value),
+        children_ages: childrenAges,
         // Add defaults or calculation for other fields if API requires them
         // For simplicity, assuming these are the core fields needed
     };
@@ -847,8 +930,8 @@ function renderCalendar() {
             const isBooked = bookings.some(booking => {
                 if (booking.room_no !== roomNum || booking.status === 'cancelled') return false;
 
-                const checkIn = new Date(booking.start_date);
-                const checkOut = new Date(booking.end_date);
+                const checkIn = new Date(booking.check_in_date);
+                const checkOut = new Date(booking.check_out_date);
                 checkIn.setHours(0, 0, 0, 0);
                 checkOut.setHours(0, 0, 0, 0);
 
@@ -869,15 +952,15 @@ function renderCalendar() {
                 // Find booking details
                 const booking = bookings.find(b => {
                     if (b.room_no !== roomNum || b.status === 'cancelled') return false;
-                    const checkIn = new Date(b.start_date);
-                    const checkOut = new Date(b.end_date);
+                    const checkIn = new Date(b.check_in_date);
+                    const checkOut = new Date(b.check_out_date);
                     checkIn.setHours(0, 0, 0, 0);
                     checkOut.setHours(0, 0, 0, 0);
                     return date >= checkIn && date < checkOut;
                 });
 
                 if (booking) {
-                    const checkIn = new Date(booking.start_date);
+                    const checkIn = new Date(booking.check_in_date);
                     checkIn.setHours(0, 0, 0, 0);
                     if (date.getTime() === checkIn.getTime()) {
                         content = `<div style="font-size: 0.7rem; font-weight: 600; margin-top: 0.25rem;">${booking.user_name.split(' ')[0]}</div>`;

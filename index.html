@@ -4,7 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hotel Admin Dashboard</title>
+    <title>Denison's Beach Resort</title>
+    <link rel="icon" type="image/svg+xml" href="https://heykoala.ai/wp-content/uploads/2025/09/Koala-05-1.svg">
+
     <link rel="stylesheet" href="styles.css">
 </head>
 
@@ -90,6 +92,19 @@
                     <button class="nav-item nav-tab" data-tab="bookings">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="lucide lucide-clipboard-list">
+                            <rect width="8" height="4" x="8" y="2" rx="1" ry="1" />
+                            <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+                            <path d="M12 11h4" />
+                            <path d="M12 16h4" />
+                            <path d="M8 11h.01" />
+                            <path d="M8 16h.01" />
+                        </svg>
+                        <span class="nav-text">Bookings</span>
+                    </button>
+                    <button class="nav-item" data-tab="calendar">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                             class="lucide lucide-calendar-days">
                             <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
                             <line x1="16" x2="16" y1="2" y2="6" />
@@ -101,17 +116,6 @@
                             <path d="M8 18h.01" />
                             <path d="M12 18h.01" />
                             <path d="M16 18h.01" />
-                        </svg>
-                        <span class="nav-text">Bookings</span>
-                    </button>
-                    <button class="nav-item" data-tab="calendar">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                            class="lucide lucide-calendar">
-                            <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
-                            <line x1="16" x2="16" y1="2" y2="6" />
-                            <line x1="8" x2="8" y1="2" y2="6" />
-                            <line x1="3" x2="21" y1="10" y2="10" />
                         </svg>
                         <span class="nav-text">Calendar</span>
                     </button>
@@ -169,7 +173,7 @@
                     <!-- Overview Tab -->
                     <div id="overviewTab" class="tab-content active">
                         <div class="stats-grid">
-                            <div class="stat-card">
+                            <div class="stat-card" data-navigate="rooms" style="cursor: pointer;">
                                 <div class="stat-content">
                                     <div>
                                         <p class="stat-label">Total Rooms</p>
@@ -185,7 +189,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="stat-card">
+                            <div class="stat-card" data-navigate="bookings" style="cursor: pointer;">
                                 <div class="stat-content">
                                     <div>
                                         <p class="stat-label">Total Bookings</p>
@@ -204,7 +208,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="stat-card">
+                            <div class="stat-card" data-navigate="calendar" style="cursor: pointer;">
                                 <div class="stat-content">
                                     <div>
                                         <p class="stat-label">Confirmed</p>
@@ -222,7 +226,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="stat-card">
+                            <div class="stat-card" style="cursor: default;">
                                 <div class="stat-content">
                                     <div>
                                         <p class="stat-label">Revenue</p>
@@ -590,6 +594,61 @@
                         <span class="date-value" id="detailCheckOut"></span>
                     </div>
                 </div>
+
+                <!-- Additional Booking Information -->
+                <div class="booking-main-info" style="grid-template-columns: 1fr 1fr 1fr;">
+                    <!-- Guests Info -->
+                    <div class="info-card">
+                        <div class="icon-wrapper" style="background: #fef3c7; color: #d97706;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                                <circle cx="9" cy="7" r="4" />
+                                <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                            </svg>
+                        </div>
+                        <div class="info-content">
+                            <label>Guests</label>
+                            <h4 id="detailGuests"></h4>
+                        </div>
+                    </div>
+
+                    <!-- Total Price -->
+                    <div class="info-card">
+                        <div class="icon-wrapper" style="background: #d1fae5; color: #059669;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <line x1="12" x2="12" y1="2" y2="22" />
+                                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                            </svg>
+                        </div>
+                        <div class="info-content">
+                            <label>Total Amount</label>
+                            <h4 id="detailPrice"></h4>
+                        </div>
+                    </div>
+
+                    <!-- Booked On -->
+                    <div class="info-card">
+                        <div class="icon-wrapper" style="background: #dbeafe; color: #2563eb;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
+                                <line x1="16" x2="16" y1="2" y2="6" />
+                                <line x1="8" x2="8" y1="2" y2="6" />
+                                <line x1="3" x2="21" y1="10" y2="10" />
+                            </svg>
+                        </div>
+                        <div class="info-content">
+                            <label>Booked On</label>
+                            <h4 id="detailCreatedAt"></h4>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary booking-details-close">Close</button>
@@ -642,6 +701,12 @@
                     <label>Number of Children</label>
                     <input type="number" id="bookingChildren" min="0" value="0" required>
                 </div>
+                <!-- <div class="form-group" id="childAgesContainer" style="display: none;">
+                    <label>Ages of Children</label>
+                    <div id="childAgesInputs" style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        Child age inputs will be added here dynamically
+                    </div>
+                </div> -->
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary booking-modal-cancel">Cancel</button>
                     <button type="submit" class="btn btn-primary">Confirm Booking</button>

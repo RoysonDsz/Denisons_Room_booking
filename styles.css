@@ -1278,3 +1278,17 @@ body.dark-mode .calendar-table tbody td:first-child {
 body.dark-mode .calendar-table tbody td {
     border-color: #374151;
 }
+
+/* Clickable Stat Cards */
+.stat-card[data-navigate] {
+    transition: all 0.3s ease;
+}
+
+.stat-card[data-navigate]:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+body.dark-mode .stat-card[data-navigate]:hover {
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
