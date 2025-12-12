@@ -1,4 +1,4 @@
-const API_BASE = 'https://f263ce72fe22.ngrok-free.app';
+const API_BASE = 'https://bookingbe.heykoala.ai';
 
 // State
 let token = '';
