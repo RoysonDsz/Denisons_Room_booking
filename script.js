@@ -1,4 +1,4 @@
-const API_BASE = 'https://dadbe2c6ed06.ngrok-free.app';
+const API_BASE = 'https://f263ce72fe22.ngrok-free.app';
 
 // State
 let token = '';
@@ -935,12 +935,13 @@ function renderCalendar() {
                 checkIn.setHours(0, 0, 0, 0);
                 checkOut.setHours(0, 0, 0, 0);
 
-                return date >= checkIn && date < checkOut;
+                return date >= checkIn && date <= checkOut;
             });
 
             let bgColor = '#dcfce7'; // Available (green)
             let borderColor = '#86efac';
             let content = '';
+            let isEndDate = false;
 
             if (isPast) {
                 bgColor = '#f3f4f6'; // Past date (gray)
@@ -956,19 +957,32 @@ function renderCalendar() {
                     const checkOut = new Date(b.check_out_date);
                     checkIn.setHours(0, 0, 0, 0);
                     checkOut.setHours(0, 0, 0, 0);
-                    return date >= checkIn && date < checkOut;
+                    return date >= checkIn && date <= checkOut;
                 });
 
                 if (booking) {
                     const checkIn = new Date(booking.check_in_date);
+                    const checkOut = new Date(booking.check_out_date);
                     checkIn.setHours(0, 0, 0, 0);
+                    checkOut.setHours(0, 0, 0, 0);
+
                     if (date.getTime() === checkIn.getTime()) {
                         content = `<div style="font-size: 0.7rem; font-weight: 600; margin-top: 0.25rem;">${booking.user_name.split(' ')[0]}</div>`;
+                    }
+
+                    // Check if this is the end date of the booking
+                    if (date.getTime() === checkOut.getTime()) {
+                        isEndDate = true;
                     }
                 }
             }
 
-            calendarHTML += `<td style="padding: 0.5rem; text-align: center; background: ${bgColor}; border: 1px solid ${borderColor}; min-height: 50px; vertical-align: top;">
+            // Add special border for end date
+            const borderStyle = isEndDate
+                ? `border: 1px solid ${borderColor}; border-right: 3px solid #dc2626;`
+                : `border: 1px solid ${borderColor};`;
+
+            calendarHTML += `<td style="padding: 0.5rem; text-align: center; background: ${bgColor}; ${borderStyle} min-height: 50px; vertical-align: top;">
                 ${content}
             </td>`;
         }
