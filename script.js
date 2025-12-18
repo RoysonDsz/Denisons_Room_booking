@@ -1,4 +1,4 @@
-const API_BASE = "http://127.0.0.1:8000";
+const API_BASE = "https://bookingbe.heykoala.ai/";
 
 // State
 let token = "";
@@ -605,11 +605,10 @@ function renderRoomTypes(data = roomTypes) {
     .map(
       (room) => `
         <div class="room-card">
-            ${
-              room.image_url
-                ? `<img src="${room.image_url}" alt="${room.name}" class="room-image">`
-                : ""
-            }
+            ${room.image_url
+          ? `<img src="${room.image_url}" alt="${room.name}" class="room-image">`
+          : ""
+        }
             <div class="room-content">
                 <h3 class="room-title">${room.name}</h3>
                 <p class="room-description">${room.description || ""}</p>
@@ -617,63 +616,54 @@ function renderRoomTypes(data = roomTypes) {
                 <div class="room-details">
                     <div class="room-detail-row">
                         <span class="room-detail-label">Capacity:</span>
-                        <span class="room-detail-value">${
-                          room.capacity.adults
-                        }A + ${room.capacity.children}C</span>
+                        <span class="room-detail-value">${room.capacity.adults
+        }A + ${room.capacity.children}C</span>
                     </div>
                     <div class="room-detail-row">
                         <span class="room-detail-label">Price:</span>
-                        <span class="room-detail-value" style="color: #4f46e5;">₹${
-                          room.pricing.total_price
-                        }/night</span>
+                        <span class="room-detail-value" style="color: #4f46e5;">₹${room.pricing.total_price
+        }/night</span>
                     </div>
                     <div class="room-detail-row">
                         <span class="room-detail-label">Total Rooms:</span>
-                        <span class="room-detail-value">${
-                          room.room_numbers.length
-                        }</span>
+                        <span class="room-detail-value">${room.room_numbers.length
+        }</span>
                     </div>
                     <div class="room-detail-row">
                         <span class="room-detail-label">Stay Range:</span>
-                        <span class="room-detail-value">${room.min_days}-${
-        room.max_days
-      } days</span>
+                        <span class="room-detail-value">${room.min_days}-${room.max_days
+        } days</span>
                     </div>
                 </div>
                 
-                ${
-                  room.amenities.length > 0
-                    ? `
+                ${room.amenities.length > 0
+          ? `
                     <div class="amenities-list">
                         ${room.amenities
-                          .slice(0, 3)
-                          .map(
-                            (amenity) =>
-                              `<span class="amenity-tag">${amenity}</span>`
-                          )
-                          .join("")}
-                        ${
-                          room.amenities.length > 3
-                            ? `<span class="amenity-tag">+${
-                                room.amenities.length - 3
-                              } more</span>`
-                            : ""
-                        }
+            .slice(0, 3)
+            .map(
+              (amenity) =>
+                `<span class="amenity-tag">${amenity}</span>`
+            )
+            .join("")}
+                        ${room.amenities.length > 3
+            ? `<span class="amenity-tag">+${room.amenities.length - 3
+            } more</span>`
+            : ""
+          }
                     </div>
                 `
-                    : ""
-                }
+          : ""
+        }
                 
                 <div class="room-actions">
-                    <button class="btn-edit" onclick="editRoom(${
-                      room.id
-                    })" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                    <button class="btn-edit" onclick="editRoom(${room.id
+        })" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
                         Edit
                     </button>
-                    <button class="btn-delete" onclick="deleteRoom(${
-                      room.id
-                    })" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                    <button class="btn-delete" onclick="deleteRoom(${room.id
+        })" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash-2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
                         Delete
                     </button>
@@ -742,9 +732,8 @@ function renderBookingsTable() {
 
           <!-- Phone + Webhook -->
           <td onclick="event.stopPropagation()">
-            ${
-              cleanPhone
-                ? `
+            ${cleanPhone
+          ? `
                   <div style="display:flex; gap:0.6rem; align-items:center;">
 
                     <!-- Phone number (no +, no underline, no bold) -->
@@ -770,8 +759,8 @@ function renderBookingsTable() {
 
                   </div>
                 `
-                : "-"
-            }
+          : "-"
+        }
           </td>
 
           <td>${booking.room_name} (#${booking.room_no})</td>
@@ -783,14 +772,13 @@ function renderBookingsTable() {
           </td>
 
           <td onclick="event.stopPropagation()">
-            ${
-              booking.status === "confirmed"
-                ? `<button class="btn-cancel-booking"
+            ${booking.status === "confirmed"
+          ? `<button class="btn-cancel-booking"
                      onclick="cancelBooking(${booking.booking_id})">
                      Cancel
                    </button>`
-                : "-"
-            }
+          : "-"
+        }
           </td>
         </tr>
       `;
@@ -879,11 +867,10 @@ function filterBookingsTable() {
             </span>
           </td>
           <td onclick="event.stopPropagation()">
-            ${
-              booking.status === "confirmed"
-                ? `<button class="btn-cancel-booking" onclick="cancelBooking(${booking.booking_id})">Cancel</button>`
-                : "-"
-            }
+            ${booking.status === "confirmed"
+          ? `<button class="btn-cancel-booking" onclick="cancelBooking(${booking.booking_id})">Cancel</button>`
+          : "-"
+        }
           </td>
         </tr>
       `
@@ -1007,9 +994,9 @@ async function handleCreateRoomType(e) {
   const amenitiesInput = document.getElementById("amenities").value;
   const amenitiesArray = amenitiesInput
     ? amenitiesInput
-        .split(",")
-        .map((a) => a.trim())
-        .filter((a) => a)
+      .split(",")
+      .map((a) => a.trim())
+      .filter((a) => a)
     : [];
 
   const roomTypeData = {
@@ -1352,8 +1339,8 @@ function renderCalendar() {
     selectedCalendarRoomType === "all"
       ? bookings
       : bookings.filter(
-          (b) => String(b.room_type_id) === String(selectedCalendarRoomType)
-        );
+        (b) => String(b.room_type_id) === String(selectedCalendarRoomType)
+      );
 
   /* ======================
      Month Header
