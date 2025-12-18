@@ -1,4 +1,4 @@
-const API_BASE = "https://bookingbe.heykoala.ai/";
+const API_BASE = "https://bookingbe.heykoala.ai";
 
 // State
 let token = "";
@@ -1554,3 +1554,4 @@ function formatDateForComparison(date) {
   const day = String(date.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
 }
+
